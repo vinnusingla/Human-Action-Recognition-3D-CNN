@@ -65,22 +65,8 @@ def def_model(model_dir):
 def main():
     num_classes = 12
     batch_size = 8
-    num_epochs = 2
-    print('loading data')
+    num_epochs = 1
     #########################################################################################
-    #load train and validation data
-    train_X = np.load('X1.npy')
-    train_Y = np.load('Y1.npy')
-    train_Y = train_Y - 1
-    train_Y = np_utils.to_categorical(train_Y, num_classes)
-
-    val_X = np.load('VX.npy')
-    val_Y = np.load('VY.npy')
-    val_Y = val_Y - 1
-    val_Y = np_utils.to_categorical(val_Y, num_classes)
-
-    ##########################################################################################
-    print('data loaded')
     # Load model"""
     model = def_model('./models')
     print('model loaded')
@@ -89,21 +75,38 @@ def main():
     model.compile(loss='categorical_crossentropy', 
         optimizer=optimizers.SGD(lr=1e-4, momentum=0.9),
         metrics=['mse', 'accuracy'])
+    #########################################################################################
+    print('loading data')
+    #########################################################################################
+    #load validation data
 
-    # Train model
-    print(train_X.shape)
-    print(train_Y.shape)
-    hist = model.fit(
-        train_X,
-        train_Y,
-        validation_data=(val_X, val_Y),
-        batch_size=batch_size,
-        nb_epoch=num_epochs,
-        shuffle=True,
-        verbose=1,
-        callbacks=[checkpointer]
-        )
+    val_X = np.load('VX.npy')
+    val_Y = np.load('VY.npy')
+    val_Y = val_Y - 1
+    val_Y = np_utils.to_categorical(val_Y, num_classes)
 
+    print('Validation data loaded')
+    ##########################################################################################
+    for i in range(0,1):
+        for j in range(0,4):
+            print('loading data'+str(j))
+            train_X = np.load('X{}.npy'.format(str(j+1)))
+            train_Y = np.load('Y{}.npy'.format(str(j+1)))
+            train_Y = train_Y - 1
+            train_Y = np_utils.to_categorical(train_Y, num_classes)
+            print('Data loaded')
+            hist = model.fit(
+                train_X,
+                train_Y,
+                validation_data=(val_X, val_Y),
+                batch_size=batch_size,
+                nb_epoch=num_epochs,
+                shuffle=True,
+                verbose=1,
+                callbacks=[checkpointer]
+                )
+            print("Part "+str(j)+"Completed Iteration = "+str(i))
+    ##########################################################################################
     # Evaluate the model
     out = score = model.evaluate(
         val_X,

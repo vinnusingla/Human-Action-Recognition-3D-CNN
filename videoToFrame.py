@@ -23,10 +23,13 @@ for line in file:
 file.close()
 
 file=open('trainNames.txt','r')
-
+t=7
 for line in file:
-	subpath=line[:-7]
+	if(line[-t]=='.'):
+		t=t+1
+	subpath=line[:-t]
 	testpath="TrainData/"+subpath+"/"
+	# print(testpath)
 	inputt="Data/"+line[:-3]
 	if not os.path.exists(testpath):
 		os.makedirs(testpath)
