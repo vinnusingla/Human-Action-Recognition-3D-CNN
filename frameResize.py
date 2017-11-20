@@ -22,13 +22,14 @@ for line in file:
 		# print(x.shape)
 file.close()
 
-t=7
 file=open('trainNames.txt','r')
 for line in file:
-	if(line[-t]=='.'):
+	t=7
+	if(line[-t]!='.'):
 		t=t+1
 	subpath=line[:-t]
 	testpath="TrainData/"+subpath+"/"
+	# print(t,line,subpath)
 	name="out{}.jpg"
 	i = 1
 	while os.path.isfile(testpath+name.format(str(i))):
